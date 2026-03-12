@@ -1,7 +1,6 @@
-# routes/reportes.py
 from flask import Blueprint, render_template
 
-bp = Blueprint("reportes", __name__)
+bp = Blueprint("reportes", __name__, url_prefix="/reportes")
 
 @bp.route("/")
 def index():

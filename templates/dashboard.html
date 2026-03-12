@@ -47,4 +47,11 @@ Cerrar sesión
         {% endfor %}
     </section>
 </body>
+{% if current_user.rol.nombre == "admin" %}
+
+<a href="{{ url_for('admin.panel_admin') }}">
+⚙️ Panel Administrativo
+</a>
+
+{% endif %}
 </html>

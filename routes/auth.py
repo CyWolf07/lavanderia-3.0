@@ -7,9 +7,7 @@ bp = Blueprint("auth", __name__)
 
 @bp.route("/login", methods=["GET","POST"])
 def login():
-
     if request.method == "POST":
-
         email = request.form["email"]
         password = request.form["password"]
 
@@ -41,26 +39,23 @@ def logout():
 
 @bp.route("/register", methods=["GET","POST"])
 def register():
-
     if request.method == "POST":
-
         nombre = request.form["nombre"]
         email = request.form["email"]
         password = request.form["password"]
 
         existente = Usuario.query.filter_by(email=email).first()
-
         if existente:
             flash("El correo ya está registrado","warning")
             return redirect(url_for("auth.register"))
 
         rol = Rol.query.filter_by(nombre="Operario").first()
-
         if not rol:
             rol = Rol(nombre="Operario")
             db.session.add(rol)
             db.session.commit()
 
+        # Guardar contraseña encriptada con bcrypt
         hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
         nuevo_usuario = Usuario(
@@ -74,7 +69,6 @@ def register():
         db.session.commit()
 
         flash("Usuario creado correctamente","success")
-
         return redirect(url_for("auth.login"))
 
     return render_template("register.html")
