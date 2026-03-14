@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template 
 from extensions import db, login_manager, bcrypt
 from models import Usuario, Rol, Prenda, Produccion
 from routes.auth import bp as auth_bp
@@ -19,13 +19,7 @@ bcrypt.init_app(app)
 
 @app.route("/")
 def inicio():
-    return """
-    <h1>🧺 Sistema de Lavandería</h1>
-    <br>
-    <a href='/login'>🔐 Iniciar sesión</a>
-    <br><br>
-    <a href='/register'>📝 Registrarse</a>
-    """
+    return render_template("inicio.html")
 
 @login_manager.user_loader
 def load_user(user_id):
