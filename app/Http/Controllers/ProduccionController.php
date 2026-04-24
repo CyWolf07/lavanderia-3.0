@@ -9,11 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class ProduccionController extends Controller
 {
+    private function resolveValidUserId(): ?int
+    {
+        return Auth::id() ?? \App\Models\User::query()->value('id');
+    }
+
     public function index()
     {
-        // View for user's own production
-        $userId = Auth::id() ?? (\App\Models\User::first()?->id ?? 1);
-        $producciones = Produccion::with('prenda')->where('user_id', $userId)->latest()->get();
+        // Show latest production records available in the system.
+        $producciones = Produccion::with('prenda')->latest()->limit(20)->get();
         $prendas = Prenda::all();
         return view('produccion.index', compact('producciones', 'prendas'));
     }
@@ -27,9 +31,13 @@ class ProduccionController extends Controller
 
         $prenda = Prenda::findOrFail($request->prenda_id);
         $total = $prenda->precio * $request->cantidad;
+        $userId = $this->resolveValidUserId();
+        if (! $userId) {
+            return redirect()->back()->with('error', 'No existe un usuario valido para registrar la producción.');
+        }
 
         Produccion::create([
-            'user_id' => Auth::id() ?? (\App\Models\User::first()?->id ?? 1),
+            'user_id' => $userId,
             'prenda_id' => $request->prenda_id,
             'cantidad' => $request->cantidad,
             'total' => $total,
